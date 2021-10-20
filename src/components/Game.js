@@ -1,29 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, StyleSheet } from 'react-native';
+import RandomNumberButton from './RandomNumberButton';
 
 class Game extends React.Component {
   static propTypes = {
     randomNumberCount: PropTypes.number.isRequired,
   };
 
-  generateRandomNumbers() {
+  generateRandomNumbersArray = () => {
     return Array.from({ length: this.props.randomNumberCount }).map(
       () => 1 + Math.floor(10 * Math.random()),
     );
-  }
+  };
 
-  generateTarget() {
-    return this.randomNumbers
+  generateTargetFromRandomNumbers = randomNumbers => {
+    return randomNumbers
       .slice(0, this.props.randomNumberCount - 2)
       .reduce((accumulator, currentElement) => accumulator + currentElement, 0);
-  }
+  };
 
-  randomNumbers = this.generateRandomNumbers();
+  randomNumbers = this.generateRandomNumbersArray();
 
-  target = this.generateTarget();
+  target = this.generateTargetFromRandomNumbers(this.randomNumbers);
 
-  // TODO: shuffle random numbers to avoid always being the first 4
+  // TODO: shuffle random numbers to avoid answer  always being the first 4
   render() {
     return (
       <View style={styles.container}>
@@ -31,9 +32,7 @@ class Game extends React.Component {
 
         <View style={styles.randomNumbersSection}>
           {this.randomNumbers.map((number, index) => (
-            <Text style={styles.randomNumber} key={index}>
-              {number}
-            </Text>
+            <RandomNumberButton key={index} number={number} />
           ))}
         </View>
       </View>
