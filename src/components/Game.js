@@ -52,15 +52,20 @@ class Game extends React.Component {
     }
   };
 
+  targetPanelStyle = gameStatus => {};
+
   randomNumbers = this.generateRandomNumbersArray();
   target = this.generateTargetFromRandomNumbers(this.randomNumbers);
 
   // TODO: shuffle random numbers to avoid answer  always being the first 4
   render() {
     const gameStatus = this.gameStatus();
+
     return (
       <View style={styles.container}>
-        <Text style={styles.target}>{this.target}</Text>
+        <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>
+          {this.target}
+        </Text>
 
         <View style={styles.randomNumbersSection}>
           {this.randomNumbers.map((number, index) => (
@@ -68,7 +73,9 @@ class Game extends React.Component {
               key={index}
               id={index}
               number={number}
-              isDisabled={this.isNumberSelected(index)}
+              isDisabled={
+                this.isNumberSelected(index) || gameStatus !== 'PLAYING'
+              }
               onPress={this.selectNumber}
             />
           ))}
@@ -87,7 +94,6 @@ const styles = StyleSheet.create({
     paddingTop: 45,
   },
   target: {
-    backgroundColor: '#bbb',
     fontSize: 50,
     textAlign: 'center',
     margin: 50,
@@ -105,6 +111,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#999',
     marginHorizontal: 15,
     marginVertical: 25,
+  },
+  STATUS_PLAYING: {
+    backgroundColor: '#bbb',
+  },
+  STATUS_LOST: {
+    backgroundColor: 'red',
+  },
+  STATUS_WON: {
+    backgroundColor: 'green',
   },
 });
 
