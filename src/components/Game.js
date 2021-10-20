@@ -6,11 +6,32 @@ import RandomNumberButton from './RandomNumberButton';
 class Game extends React.Component {
   static propTypes = {
     randomNumberCount: PropTypes.number.isRequired,
+    secondsToAnswer: PropTypes.number.isRequired,
   };
 
   state = {
     selectedNumbersIds: [],
+    remainingSeconds: this.props.secondsToAnswer,
   };
+
+  componentDidMount() {
+    this.intervalId = setInterval(() => {
+      this.setState(
+        previousState => ({
+          remainingSeconds: previousState.remainingSeconds - 1,
+        }),
+        () => {
+          if (this.state.remainingSeconds === 0) {
+            clearInterval(this.intervalId);
+          }
+        },
+      );
+    }, 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.intervalId);
+  }
 
   generateRandomNumbersArray = () => {
     return Array.from({ length: this.props.randomNumberCount }).map(
@@ -40,6 +61,10 @@ class Game extends React.Component {
         accumulator + this.randomNumbers[currentElement],
       0,
     );
+
+    if (this.state.remainingSeconds === 0) {
+      return 'LOST';
+    }
 
     if (sumSelected < this.target) {
       return 'PLAYING';
@@ -81,7 +106,7 @@ class Game extends React.Component {
           ))}
         </View>
 
-        <Text>{gameStatus}</Text>
+        <Text style={styles.target}>{this.state.remainingSeconds}</Text>
       </View>
     );
   }
