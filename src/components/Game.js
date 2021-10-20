@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet } from 'react-native';
 import RandomNumberButton from './RandomNumberButton';
 import { shuffle } from 'lodash';
 
@@ -8,6 +8,7 @@ class Game extends React.Component {
   static propTypes = {
     randomNumberCount: PropTypes.number.isRequired,
     secondsToAnswer: PropTypes.number.isRequired,
+    handlePlayAgain: PropTypes.func.isRequired,
   };
 
   state = {
@@ -49,18 +50,6 @@ class Game extends React.Component {
     }
     return true;
   }
-
-  // UNSAFE_componentWillUpdate(nextProps, nextState) {
-  //   if (
-  //     nextState.selectedNumbersIds !== this.state.selectedNumbersIds ||
-  //     nextState.remainingSeconds === 0
-  //   ) {
-  //     this.gameStatus = this.calcGameStatus(nextState);
-  //     console.log('gameStatus', this.gameStatus);
-  //     console.log('nextState', nextState);
-  //     console.log('state', this.state);
-  //   }
-  // }
 
   generateRandomNumbersArray = () => {
     return Array.from({ length: this.props.randomNumberCount }).map(
@@ -111,7 +100,6 @@ class Game extends React.Component {
   gameStatus = 'PLAYING';
   shuffledRandomNumbers = shuffle(this.randomNumbers);
 
-  // TODO: shuffle random numbers to avoid answer  always being the first 4
   render() {
     const gameStatus = this.gameStatus;
 
@@ -135,7 +123,14 @@ class Game extends React.Component {
           ))}
         </View>
 
-        <Text style={styles.target}>{this.gameStatus}</Text>
+        {gameStatus !== 'PLAYING' && (
+          <>
+            <Text style={styles.message}>
+              You {gameStatus.toLocaleLowerCase()}!
+            </Text>
+            <Button onPress={this.props.handlePlayAgain} title={'Play Again'} />
+          </>
+        )}
         <Text style={styles.target}>{this.state.remainingSeconds}</Text>
       </View>
     );
@@ -147,6 +142,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ddd',
     flex: 1,
     paddingTop: 45,
+    paddingBottom: 45,
   },
   target: {
     fontSize: 50,
@@ -175,6 +171,16 @@ const styles = StyleSheet.create({
   },
   STATUS_WON: {
     backgroundColor: 'green',
+  },
+  message: {
+    fontSize: 25,
+    textAlign: 'center',
+    marginBottom: 25,
+  },
+  timer: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 50,
   },
 });
 
