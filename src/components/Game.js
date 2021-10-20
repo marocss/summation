@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, StyleSheet } from 'react-native';
 import RandomNumberButton from './RandomNumberButton';
+import { shuffle } from 'lodash';
 
 class Game extends React.Component {
   static propTypes = {
@@ -33,6 +34,34 @@ class Game extends React.Component {
     clearInterval(this.intervalId);
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      nextState.selectedNumbersIds !== this.state.selectedNumbersIds ||
+      nextState.remainingSeconds === 0
+    ) {
+      this.gameStatus = this.calcGameStatus(nextState);
+
+      if (this.gameStatus !== 'PLAYING') {
+        clearInterval(this.intervalId);
+      }
+
+      return true;
+    }
+    return true;
+  }
+
+  // UNSAFE_componentWillUpdate(nextProps, nextState) {
+  //   if (
+  //     nextState.selectedNumbersIds !== this.state.selectedNumbersIds ||
+  //     nextState.remainingSeconds === 0
+  //   ) {
+  //     this.gameStatus = this.calcGameStatus(nextState);
+  //     console.log('gameStatus', this.gameStatus);
+  //     console.log('nextState', nextState);
+  //     console.log('state', this.state);
+  //   }
+  // }
+
   generateRandomNumbersArray = () => {
     return Array.from({ length: this.props.randomNumberCount }).map(
       () => 1 + Math.floor(10 * Math.random()),
@@ -55,14 +84,14 @@ class Game extends React.Component {
     }));
   };
 
-  gameStatus = () => {
-    const sumSelected = this.state.selectedNumbersIds.reduce(
+  calcGameStatus = nextState => {
+    const sumSelected = nextState.selectedNumbersIds.reduce(
       (accumulator, currentElement) =>
-        accumulator + this.randomNumbers[currentElement],
+        accumulator + this.shuffledRandomNumbers[currentElement],
       0,
     );
 
-    if (this.state.remainingSeconds === 0) {
+    if (nextState.remainingSeconds === 0) {
       return 'LOST';
     }
 
@@ -77,14 +106,14 @@ class Game extends React.Component {
     }
   };
 
-  targetPanelStyle = gameStatus => {};
-
   randomNumbers = this.generateRandomNumbersArray();
   target = this.generateTargetFromRandomNumbers(this.randomNumbers);
+  gameStatus = 'PLAYING';
+  shuffledRandomNumbers = shuffle(this.randomNumbers);
 
   // TODO: shuffle random numbers to avoid answer  always being the first 4
   render() {
-    const gameStatus = this.gameStatus();
+    const gameStatus = this.gameStatus;
 
     return (
       <View style={styles.container}>
@@ -93,7 +122,7 @@ class Game extends React.Component {
         </Text>
 
         <View style={styles.randomNumbersSection}>
-          {this.randomNumbers.map((number, index) => (
+          {this.shuffledRandomNumbers.map((number, index) => (
             <RandomNumberButton
               key={index}
               id={index}
@@ -106,6 +135,7 @@ class Game extends React.Component {
           ))}
         </View>
 
+        <Text style={styles.target}>{this.gameStatus}</Text>
         <Text style={styles.target}>{this.state.remainingSeconds}</Text>
       </View>
     );
