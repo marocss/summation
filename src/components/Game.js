@@ -9,7 +9,7 @@ class Game extends React.Component {
   };
 
   state = {
-    selectedNumbers: [],
+    selectedNumbersIds: [],
   };
 
   generateRandomNumbersArray = () => {
@@ -25,13 +25,31 @@ class Game extends React.Component {
   };
 
   isNumberSelected = numberIndex => {
-    return this.state.selectedNumbers.includes(numberIndex);
+    return this.state.selectedNumbersIds.includes(numberIndex);
   };
 
   selectNumber = numberIndex => {
     this.setState(previousState => ({
-      selectedNumbers: [...previousState.selectedNumbers, numberIndex],
+      selectedNumbersIds: [...previousState.selectedNumbersIds, numberIndex],
     }));
+  };
+
+  gameStatus = () => {
+    const sumSelected = this.state.selectedNumbersIds.reduce(
+      (accumulator, currentElement) =>
+        accumulator + this.randomNumbers[currentElement],
+      0,
+    );
+
+    if (sumSelected < this.target) {
+      return 'PLAYING';
+    }
+    if (sumSelected > this.target) {
+      return 'LOST';
+    }
+    if (sumSelected === this.target) {
+      return 'WON';
+    }
   };
 
   randomNumbers = this.generateRandomNumbersArray();
@@ -39,6 +57,7 @@ class Game extends React.Component {
 
   // TODO: shuffle random numbers to avoid answer  always being the first 4
   render() {
+    const gameStatus = this.gameStatus();
     return (
       <View style={styles.container}>
         <Text style={styles.target}>{this.target}</Text>
@@ -54,6 +73,8 @@ class Game extends React.Component {
             />
           ))}
         </View>
+
+        <Text>{gameStatus}</Text>
       </View>
     );
   }
