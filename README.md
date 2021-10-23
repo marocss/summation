@@ -4,19 +4,20 @@
 ## Technologies & Tools
 * [reactjs](https://reactjs.org/)
 * [react native](https://reactnative.dev)
+* [styled components](https://styled-components.com)
 
 ## Demo
 ![](summation-example.gif)
 
 ## TODO
-* [ ] make the game harder when you play again
-* [ ] keep the score
-* [ ] update to functional components
-* [ ] add styled components
+* [x] add styled components
+* [ ] update to functional components (DOING)
 * [ ] add typescript
-* [ ] update layout
 * [ ] add authentication
 * [ ] store user data in a database
+* [ ] update layout
+* [ ] keep the score
+* [ ] make the game harder when you play again - level
 * [ ] deploy
 
 ## Acknowledgments

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, Button, StyleSheet } from 'react-native';
-import RandomNumberButton from './RandomNumberButton';
+import { RandomNumberButton } from './RandomNumberButton';
 import { shuffle } from 'lodash';
 
 class Game extends React.Component {
